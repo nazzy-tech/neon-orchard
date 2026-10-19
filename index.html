@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+  <meta name="theme-color" content="#101724">
+  <meta name="description" content="A tiny neon fruit-catching arcade. Catch the ripe fruit, dodge the rotten ones, and climb the orchard leaderboard.">
+  <title>Neon Orchard</title>
+  <link rel="icon" href="./icon.svg" type="image/svg+xml">
+  <style>
+    :root{color-scheme:dark;--ink:#101724;--panel:#182332;--cream:#f7f2df;--muted:#9eacb7;--lime:#d6ff5c;--coral:#ff796c;--line:#2c3b4c}
+    *{box-sizing:border-box}body{margin:0;min-height:100svh;background:radial-gradient(ellipse at 50% 20%,#243545 0,#101724 56%);color:var(--cream);font-family:'Space Grotesk',system-ui,sans-serif;display:flex;justify-content:center;overflow-x:hidden}
+    button{font:inherit;color:inherit;cursor:pointer} .shell{width:min(100%,1040px);padding:20px 24px 28px;display:flex;flex-direction:column;gap:17px}
+    .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px}.brand{display:flex;align-items:center;gap:11px}.brand-mark{width:40px;height:40px;border-radius:13px;background:var(--lime);display:grid;place-items:center;color:var(--ink);font-size:23px;box-shadow:0 0 30px #d6ff5c35}.brand h1{font-size:18px;line-height:1;margin:0;letter-spacing:-.04em}.brand small{display:block;color:var(--muted);font:10px 'DM Mono',monospace;letter-spacing:.15em;text-transform:uppercase;margin-top:5px}
+    .player-card{display:flex;align-items:center;gap:9px;border:1px solid var(--line);border-radius:999px;padding:5px 12px 5px 5px;background:#182332cc;min-height:46px}.player-card[hidden]{display:none}.player-card img{width:34px;height:34px;border-radius:50%;background:var(--lime);object-fit:cover}.player-name{font-size:12px;font-weight:700;line-height:1.15}.player-account{display:block;color:var(--muted);font:10px 'DM Mono',monospace;margin-top:3px}.signin{border:0;background:var(--lime);color:var(--ink);border-radius:99px;padding:8px 12px;font-size:11px;font-weight:700;margin-left:4px}
+    .main{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(240px,.8fr);gap:17px;align-items:stretch}.game-card,.side-card{background:linear-gradient(155deg,#1b2938,#151f2b);border:1px solid var(--line);border-radius:22px;box-shadow:0 18px 50px #05090f55}.game-card{padding:18px;display:flex;flex-direction:column;min-height:600px}.game-head{display:flex;justify-content:space-between;align-items:flex-start}.eyebrow{font:10px 'DM Mono',monospace;color:var(--lime);letter-spacing:.17em;text-transform:uppercase}.game-head h2{margin:6px 0 0;font-size:clamp(24px,4vw,38px);letter-spacing:-.06em;line-height:1}.round-label{font:10px 'DM Mono',monospace;color:var(--muted);border:1px solid var(--line);border-radius:99px;padding:8px 10px}.stats{display:flex;gap:9px;margin:17px 0 14px}.stat{flex:1;background:#111a25;border:1px solid #263747;border-radius:13px;padding:10px 12px}.stat label{display:block;color:var(--muted);font:9px 'DM Mono',monospace;letter-spacing:.13em;text-transform:uppercase}.stat strong{display:block;font-size:21px;letter-spacing:-.04em;margin-top:2px}.stat strong.lime{color:var(--lime)}
+    .orchard{position:relative;flex:1;min-height:330px;overflow:hidden;border:1px solid #344653;border-radius:17px;background:linear-gradient(180deg,#13212b 0%,#1d3540 52%,#1e3a34 100%);isolation:isolate}.orchard:before{content:'';position:absolute;inset:0;background-image:radial-gradient(#d6ff5c17 1px,transparent 1px);background-size:22px 22px;opacity:.5;pointer-events:none}.moon{position:absolute;right:12%;top:12%;width:54px;height:54px;border-radius:50%;background:#e5f7bc;box-shadow:0 0 38px #d6ff5c60;opacity:.88}.hill{position:absolute;bottom:-42px;width:120%;height:125px;border-radius:50% 50% 0 0;background:#19382f;left:-10%;z-index:-0}.hill.back{bottom:-62px;background:#173028;left:24%;height:150px}.tree{position:absolute;bottom:63px;width:9px;height:90px;background:#6a4c39;border-radius:6px;z-index:1}.tree:before,.tree:after{content:'';position:absolute;border-radius:50%;background:#2f795a;width:70px;height:73px;left:-31px;top:-48px;box-shadow:inset -8px -6px #20543f}.tree:after{width:42px;height:42px;left:0;top:-67px;background:#3d9267}.tree.one{left:13%;transform:scale(.85)}.tree.two{right:13%;transform:scale(1.08)}.basket{position:absolute;z-index:5;bottom:35px;left:50%;width:86px;height:47px;transform:translateX(-50%);border-radius:8px 8px 30px 30px;background:linear-gradient(135deg,#ffbd6b,#dd7650);border:3px solid #ffe0a7;box-shadow:0 8px 22px #080f1580;transition:left .07s linear}.basket:before{content:'';position:absolute;width:55px;height:23px;border:4px solid #ffdf9b;border-bottom:0;border-radius:35px 35px 0 0;top:-18px;left:12px}.basket:after{content:'✦';position:absolute;left:32px;top:12px;color:#fff2ca;font-size:18px}.basket.avatar{border-radius:24px 24px 9px 9px;background:var(--shirt,#d6ff5c);border-color:var(--skin,#e9ad82);width:54px;height:67px;bottom:25px}.basket.avatar:before{width:31px;height:31px;border:0;border-radius:50%;background:var(--skin,#e9ad82);top:-32px;left:9px;box-shadow:0 -9px 0 2px var(--hair,#34251f)}.basket.avatar:after{content:'';height:24px;width:5px;background:var(--pants,#435a81);left:13px;top:60px;box-shadow:24px 0 var(--pants,#435a81)}.basket.avatar .accessory{position:absolute;top:4px;right:4px;font-size:12px}.fruit{position:absolute;top:-42px;z-index:3;font-size:29px;filter:drop-shadow(0 3px 4px #070c12aa);user-select:none;will-change:transform}.fruit.bad{filter:grayscale(.6) drop-shadow(0 3px 4px #070c12aa)}.splash{position:absolute;z-index:7;font-weight:700;color:var(--lime);font-size:21px;pointer-events:none;text-shadow:0 2px 8px #0a1119}.overlay{position:absolute;inset:0;z-index:9;background:#0d1620bf;backdrop-filter:blur(4px);display:grid;place-items:center;text-align:center;padding:22px}.overlay[hidden]{display:none}.overlay-box{max-width:290px}.overlay-icon{font-size:48px;line-height:1}.overlay h3{font-size:27px;letter-spacing:-.05em;margin:10px 0 5px}.overlay p{color:#bec8ca;font-size:13px;line-height:1.55;margin:0 0 16px}.primary{border:0;border-radius:12px;padding:12px 22px;color:#121b22;background:var(--lime);font-weight:700;box-shadow:0 7px 25px #d6ff5c28}.howto{display:flex;justify-content:space-between;gap:12px;color:var(--muted);font-size:11px;padding:12px 2px 0}.howto b{color:var(--cream);font-weight:600}.side{display:flex;flex-direction:column;gap:17px}.side-card{padding:18px}.side-card h3{font-size:16px;letter-spacing:-.03em;margin:0}.side-card p{color:var(--muted);font-size:12px;line-height:1.55;margin:7px 0 0}.leaderboard{flex:1;min-height:220px}.leader-heading{display:flex;align-items:center;justify-content:space-between}.live-dot{width:7px;height:7px;border-radius:50%;background:var(--lime);box-shadow:0 0 12px var(--lime)}.board-list{list-style:none;padding:0;margin:17px 0 0;display:flex;flex-direction:column;gap:8px}.board-list li{display:grid;grid-template-columns:24px 1fr auto;gap:8px;align-items:center;font-size:12px;padding:9px 10px;background:#111a25;border-radius:10px;border:1px solid #253545}.rank{font:10px 'DM Mono',monospace;color:var(--muted)}.board-list li:first-child .rank{color:var(--lime)}.score{font:11px 'DM Mono',monospace;color:var(--lime)}.board-empty{border:1px dashed var(--line);border-radius:11px;padding:18px 12px;color:var(--muted);font-size:12px;line-height:1.5;text-align:center;margin-top:15px}.best-row{display:flex;justify-content:space-between;align-items:center;margin-top:14px;color:var(--muted);font-size:11px}.best-row strong{font:13px 'DM Mono',monospace;color:var(--cream)}.notice{min-height:16px;color:var(--lime);font-size:11px;margin-top:9px}.footer{font:9px 'DM Mono',monospace;color:#71818c;letter-spacing:.1em;text-align:center;text-transform:uppercase}
+    @media(max-width:720px){.shell{padding:14px;gap:12px}.main{grid-template-columns:1fr}.game-card{min-height:570px;padding:14px}.orchard{min-height:315px}.side{display:grid;grid-template-columns:1fr 1fr;gap:12px}.leaderboard{grid-column:1/-1;min-height:180px}.side-card{padding:15px}.footer{padding-bottom:8px}}
+    @media(max-width:420px){.topbar{align-items:flex-start}.player-card{gap:6px;padding-right:7px}.player-card img{width:29px;height:29px}.player-name{font-size:10px}.signin{padding:7px 9px;font-size:10px}.brand h1{font-size:16px}.brand-mark{width:34px;height:34px}.game-card{min-height:540px}.orchard{min-height:290px}.side{grid-template-columns:1fr}.leaderboard{grid-column:auto}}
+  </style>
+  <style>
+    .basket.avatar[data-hair="afro"]:before{box-shadow:0 -14px 0 7px var(--hair,#34251f)}
+    .basket.avatar[data-hair="bun"]:before{box-shadow:0 -9px 0 2px var(--hair,#34251f),15px -17px 0 -7px var(--hair,#34251f)}
+    .basket.avatar[data-hair="ponytail"]:before{box-shadow:0 -9px 0 2px var(--hair,#34251f),20px 1px 0 -6px var(--hair,#34251f)}
+    .basket.avatar[data-hair="braids"]:before,.basket.avatar[data-hair="dreads"]:before{box-shadow:0 -10px 0 3px var(--hair,#34251f),-13px 12px 0 -7px var(--hair,#34251f),13px 13px 0 -7px var(--hair,#34251f)}
+    .basket.avatar[data-hair="bald"]:before{box-shadow:none}
+    .basket.avatar[data-body="female"]{border-radius:20px 20px 12px 12px;width:58px;clip-path:polygon(17% 0,83% 0,100% 100%,0 100%)}
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand"><div class="brand-mark">✳</div><div><h1>Neon Orchard</h1><small>After-dark arcade</small></div></div>
+      <div class="player-card" id="player-card" hidden><img id="player-face" alt=""><div><span class="player-name" id="player-name">Guest</span><span class="player-account" id="player-account"></span></div><button class="signin" id="player-sign-in" hidden>Sign in</button></div>
+    </header>
+    <main class="main">
+      <section class="game-card">
+        <div class="game-head"><div><div class="eyebrow">✦ Midnight harvest</div><h2>Catch the glow.</h2></div><span class="round-label" id="round-label">READY WHEN YOU ARE</span></div>
+        <div class="stats"><div class="stat"><label>Harvest</label><strong class="lime" id="score">000</strong></div><div class="stat"><label>Time</label><strong id="time">30</strong></div><div class="stat"><label>Best here</label><strong id="best">000</strong></div></div>
+        <div class="orchard" id="orchard" aria-label="Game area. Move the basket with arrow keys or by dragging on the screen.">
+          <div class="moon"></div><div class="tree one"></div><div class="tree two"></div><div class="hill back"></div><div class="hill"></div>
+          <div class="basket" id="basket"><span class="accessory"></span></div>
+          <div class="overlay" id="overlay"><div class="overlay-box"><div class="overlay-icon" id="overlay-icon">🍊</div><h3 id="overlay-title">A little night picking?</h3><p id="overlay-copy">Catch ripe fruit for points. Watch out for the sour ones — 30 seconds, one basket, all you.</p><button class="primary" id="start-button">Start picking</button></div></div>
+        </div>
+        <div class="howto"><span><b>← →</b> or drag to move</span><span>🍊 ripe +10 &nbsp; · &nbsp; 🥀 sour −5</span></div>
+      </section>
+      <aside class="side">
+        <section class="side-card leaderboard"><div class="leader-heading"><h3>Orchard regulars</h3><span class="live-dot" title="Shared leaderboard"></span></div><p>Best harvests from the whole community.</p><ol class="board-list" id="board-list"></ol><div class="board-empty" id="board-empty">The orchard is quiet. Get the first basket up there!<br>Sign in to save your score.</div><div class="best-row"><span>Your local best</span><strong id="local-best">0</strong></div><div class="notice" id="notice" aria-live="polite"></div></section>
+        <section class="side-card"><div class="eyebrow">The little rules</div><h3 style="margin-top:8px">Ripe is right.</h3><p>Collect glowing oranges and peaches. The wilted fruit looks tempting — leave it be. Every run is 30 seconds; your best harvest makes the board.</p></section>
+      </aside>
+    </main>
+    <footer class="footer">Made for the quiet hours · Play again anytime</footer>
+  </div>
+  <script>
+  (() => {
+    const START_NG = 'https://start.ng';
+    let framePromise;
+    function connectFrame() {
+      if (!framePromise) framePromise = new Promise((resolve, reject) => {
+        const el = document.createElement('iframe'); el.src = `${START_NG}/connect`; el.hidden = true;
+        el.onload = () => resolve(el); el.onerror = reject; document.body.append(el);
+      });
+      return framePromise;
+    }
+    async function askStartNg(message, replyType, timeoutMs = 5000) {
+      try {
+        const el = await connectFrame();
+        return await new Promise(resolve => {
+          const requestId = Math.random().toString(36).slice(2);
+          const done = reply => { clearTimeout(timer); removeEventListener('message', onMessage); resolve(reply); };
+          const timer = setTimeout(() => done(null), timeoutMs);
+          function onMessage(e) {
+            if (e.origin !== START_NG || e.source !== el.contentWindow) return;
+            if (e.data?.type === replyType && e.data.requestId === requestId) done(e.data);
+          }
+          addEventListener('message', onMessage);
+          el.contentWindow.postMessage({ ...message, requestId }, START_NG);
+        });
+      } catch { return null; }
+    }
+    const $ = id => document.getElementById(id);
+    const state = { score:0, time:30, playing:false, last:0, spawn:0, items:[], x:.5, keys:new Set(), player:null, guest:false, best:Number(localStorage.getItem('neon-orchard-best') || 0), streak:0 };
+    const orchard = $('orchard'), basket = $('basket');
+    $('best').textContent = String(state.best).padStart(3,'0'); $('local-best').textContent = state.best;
+    function drawProfile(reply) {
+      const player = reply?.user ?? reply?.guest;
+      if (!player) return;
+      state.player = reply.user || null; state.guest = !reply.user;
+      $('player-face').src = player.face || ''; $('player-name').textContent = player.name || 'Guest';
+      $('player-account').textContent = reply.user?.account ? `@${reply.user.account}` : 'Playing as guest';
+      $('player-sign-in').hidden = !!reply.user; $('player-sign-in').onclick = signIn;
+      $('player-card').hidden = false;
+      const style = player.style || {};
+      basket.classList.add('avatar');
+      basket.style.setProperty('--shirt', safeColor(style.primaryColor, '#d6ff5c'));
+      basket.style.setProperty('--pants', safeColor(style.secondaryColor, '#435a81'));
+      basket.style.setProperty('--skin', safeColor(style.skinColor, '#e9ad82'));
+      basket.style.setProperty('--hair', safeColor(style.hairColor, '#34251f'));
+      basket.dataset.hair = ['short','afro','braids','bun','ponytail','dreads','bald'].includes(style.hair) ? style.hair : 'short';
+      basket.dataset.body = style.body === 'female' ? 'female' : 'male';
+      const acc = {glasses:'◉',earrings:'✦',beard:'◡',scarf:'〰',backpack:'▣'};
+      basket.querySelector('.accessory').textContent = acc[style.accessory] || (style.hat === 'crown' ? '♛' : style.hat === 'cap' ? '⌒' : style.hat === 'beanie' ? '●' : style.hat === 'tophat' ? '♜' : '');
+    }
+    function safeColor(value, fallback) { return typeof value === 'string' && /^#[0-9a-f]{6}$/i.test(value) ? value : fallback; }
+    function signIn() { location.href = `https://start.ng/?return_to=${encodeURIComponent(location.origin + location.pathname)}`; }
+    async function refreshBoard() {
+      const reply = await askStartNg({type:'startng:leaderboard',limit:10},'startng:leaderboardData');
+      const list = $('board-list'); list.replaceChildren();
+      const entries = reply?.ok ? reply.entries || [] : [];
+      $('board-empty').hidden = entries.length > 0;
+      for (const entry of entries) {
+        const li = document.createElement('li');
+        const rank = document.createElement('span'); rank.className='rank'; rank.textContent=String(entry.rank).padStart(2,'0');
+        const name = document.createElement('span'); name.textContent=entry.name || 'Picker';
+        const score = document.createElement('span'); score.className='score'; score.textContent=String(entry.stats?.harvest ?? entry.score ?? 0);
+        li.append(rank,name,score); list.append(li);
+      }
+    }
+    function addFruit() {
+      const good = Math.random() > .24;
+      const node = document.createElement('div'); node.className = `fruit${good?'':' bad'}`;
+      node.textContent = good ? ['🍊','🍑','🍎','🍋'][Math.floor(Math.random()*4)] : ['🥀','🍂'][Math.floor(Math.random()*2)];
+      const item = {node,x:.07+Math.random()*.86,y:-.12,speed:.23+Math.random()*.17+(30-state.time)*.002,good};
+      node.style.left=`${item.x*100}%`; node.style.top='-42px'; orchard.append(node); state.items.push(item);
+    }
+    function burst(text,x,y) {
+      const el=document.createElement('div'); el.className='splash'; el.textContent=text;
+      el.style.left=`${x*100}%`; el.style.top=`${y*100}%`; orchard.append(el); setTimeout(()=>el.remove(),650);
+    }
+    function updateHud() {
+      $('score').textContent=String(state.score).padStart(3,'0'); $('time').textContent=String(Math.ceil(state.time));
+      $('round-label').textContent=state.playing?'PICKING NOW':'READY WHEN YOU ARE';
+    }
+    function tick(now) {
+      if (!state.playing) return;
+      const dt=Math.min((now-state.last)/1000,.05); state.last=now;
+      if (state.keys.has('ArrowLeft')||state.keys.has('a')) state.x-=dt*.75;
+      if (state.keys.has('ArrowRight')||state.keys.has('d')) state.x+=dt*.75;
+      state.x=Math.max(.07,Math.min(.93,state.x)); basket.style.left=`${state.x*100}%`;
+      state.time-=dt; state.spawn+=dt;
+      if (state.spawn>.63) { state.spawn=0; addFruit(); if(Math.random()>.47)addFruit(); }
+      const area=orchard.getBoundingClientRect(), bx=state.x*area.width;
+      state.items=state.items.filter(item=>{
+        item.y+=item.speed*dt; item.node.style.transform=`translateY(${item.y*area.height}px)`;
+        const ix=item.x*area.width, iy=item.y*area.height;
+        if (iy>area.height-104 && iy<area.height-34 && Math.abs(ix-bx)<62) {
+          if(item.good){state.score+=10;state.streak++;burst(state.streak>2?`+10 ×${state.streak}`:'+10',item.x,item.y)}
+          else {state.score=Math.max(0,state.score-5);state.streak=0;burst('−5',item.x,item.y)}
+          item.node.remove(); return false;
+        }
+        if(item.y>1.08){item.node.remove();return false} return true;
+      });
+      updateHud();
+      if(state.time<=0){endGame();return}
+      requestAnimationFrame(tick);
+    }
+    async function endGame() {
+      state.playing=false; state.time=0; state.items.forEach(i=>i.node.remove()); state.items=[]; updateHud();
+      const improved=state.score>state.best;
+      if(improved){state.best=state.score;localStorage.setItem('neon-orchard-best',String(state.best));$('best').textContent=String(state.best).padStart(3,'0');$('local-best').textContent=state.best}
+      let message=state.score===0?'The trees are still warming up. Give it another go.':`${state.score} fruit in the basket.${improved?' A new personal best!':''}`;
+      if(state.player){
+        const saved=await askStartNg({type:'startng:score',stats:{harvest:state.score,streak:state.streak}},'startng:scoreSaved');
+        if(saved?.ok) message+=saved.result?.improved?` Saved to the board at #${saved.result.rank}.`:' Saved to the orchard board.';
+        else if(saved?.error) message+=' Sign in again to save your score.';
+      } else if(state.guest) message+=' Sign in to put your score on the shared board.';
+      $('overlay-icon').textContent=improved?'🏆':'🍑'; $('overlay-title').textContent=improved?'Lovely picking!':'Time for a little rest'; $('overlay-copy').textContent=message;
+      $('start-button').textContent='Pick again'; $('overlay').hidden=false; $('notice').textContent=state.player&&state.score>0?'Run finished — checking the shared board…':'';
+      await refreshBoard(); $('notice').textContent='';
+    }
+    function startGame() {
+      state.items.forEach(i=>i.node.remove()); state.items=[]; state.score=0;state.time=30;state.playing=true;state.last=performance.now();state.spawn=0;state.streak=0;
+      $('overlay').hidden=true; $('notice').textContent=''; updateHud(); requestAnimationFrame(tick);
+    }
+    $('start-button').addEventListener('click',startGame);
+    window.addEventListener('keydown',e=>{if(['ArrowLeft','ArrowRight',' '].includes(e.key))e.preventDefault();state.keys.add(e.key);if(!state.playing&&e.key==='Enter')startGame()});
+    window.addEventListener('keyup',e=>state.keys.delete(e.key));
+    orchard.addEventListener('pointermove',e=>{if(!state.playing)return;const r=orchard.getBoundingClientRect();state.x=Math.max(.07,Math.min(.93,(e.clientX-r.left)/r.width))});
+    orchard.addEventListener('pointerdown',e=>{if(!state.playing)return;orchard.setPointerCapture(e.pointerId);const r=orchard.getBoundingClientRect();state.x=Math.max(.07,Math.min(.93,(e.clientX-r.left)/r.width))});
+    document.addEventListener('visibilitychange',()=>{if(!document.hidden)askStartNg({type:'startng:whoami'},'startng:user').then(reply=>{if(reply)drawProfile(reply)})});
+    window.addEventListener('focus',()=>askStartNg({type:'startng:whoami'},'startng:user').then(reply=>{if(reply)drawProfile(reply)}));
+    askStartNg({type:'startng:whoami'},'startng:user').then(reply=>{if(reply)drawProfile(reply);else {$('player-card').hidden=false;$('player-name').textContent='Guest picker';$('player-account').textContent='Play a round to begin';$('player-sign-in').hidden=false;$('player-sign-in').onclick=signIn}});
+    refreshBoard();
+  })();
+  </script>
+</body>
+</html>

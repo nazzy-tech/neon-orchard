@@ -1,0 +1,8 @@
+{
+  "leaderboard": {
+    "stats": [
+      { "key": "harvest", "label": "Fruit harvested", "order": "highest" },
+      { "key": "streak", "label": "Best streak", "order": "highest" }
+    ]
+  }
+}
